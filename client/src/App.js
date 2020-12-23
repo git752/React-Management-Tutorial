@@ -20,29 +20,48 @@ const styles = theme => ({
   }
 })
 
-const customers = [
-{
-  'id' : 1,
-  'image' : 'https://placeimg.com/64/64/any/1',
-  'name' : '홍길동',
-  'birthday' : '919119',
-  'gender' : '남자',
-  'job' : '대학생'
-},
-{
-  'id' : 2,
-  'image' : 'https://placeimg.com/64/64/any/2',
-  'name' : '훙길둥',
-  'birthday' : '313141',
-  'gender' : '남자',
-  'job' : '대학생'
-}
-]
+// const customers = [
+// {
+//   'id' : 1,
+//   'image' : 'https://placeimg.com/64/64/any/1',
+//   'name' : '홍길동',
+//   'birthday' : '919119',
+//   'gender' : '남자',
+//   'job' : '대학생'
+// },
+// {
+//   'id' : 2,
+//   'image' : 'https://placeimg.com/64/64/any/2',
+//   'name' : '훙길둥',
+//   'birthday' : '313141',
+//   'gender' : '남자',
+//   'job' : '대학생'
+// }
+// ]
 
 
 class App extends Component{
+
+  state = {
+    customers: ""
+  }
+
+  componentDidMount(){
+    // callApi를 불러와서 then함수로 하여금 res라는 이름으로 바뀌고 데이터를 customers에 담는다
+    this.callApi() 
+    .then(res => this.setState({customers: res})) 
+    .catch(err => console.log(err)); //error 처리
+  }
+
+  callApi = async () => {
+    const response = await fetch('/api/customers'); // 가져올 api주소 입력
+    const body = await response.json();
+    return body; // body(데이터) 반환
+  }
+
+
     render(){
-      const { classes } = this.props;
+      const { classes } = this.props; // props는 변경될 수 없는 데이터를 명시 할때, state는 변경 되는 데이터를 명시 할때 사용
       return(
         <Paper className={classes.root}>
           <Table className={classes.table}>
@@ -56,7 +75,7 @@ class App extends Component{
             </TableHead>
             <TableBody>
                 {
-                  customers.map(c => {
+                  this.state.customers ? this.state.customers.map(c => {
                     return(
                     <Customer
                       id={c.id}
@@ -66,7 +85,7 @@ class App extends Component{
                       gender={c.gender}
                       job={c.job}
                     />);
-                  })
+                  }) : "데이터가 없습니다."
                 }
             </TableBody>
           </Table>
