@@ -7,6 +7,7 @@ import TableHead from '@material-ui/core/TableHead';
 import TableBody from '@material-ui/core/TableBody';
 import TableRow from '@material-ui/core/TableRow';
 import TableCell from '@material-ui/core/TableCell';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import { withStyles } from '@material-ui/core/styles';
 
 const styles = theme => ({
@@ -17,6 +18,9 @@ const styles = theme => ({
   },
   table:{
     minWidth: 1080
+  },
+  progress:{
+    margin : theme.spacing.unit * 2
   }
 })
 
@@ -39,15 +43,31 @@ const styles = theme => ({
 // }
 // ]
 
+/*
+---React LiftCycle 구조---
+1) constructor() // 불러오고
+2) componentWillMount() // 마운트되기전에 
+3) render() // 화면에 그리고
+4) componentDidMount() // 불러와짐
+
+props or state => shouldComponentUpdate() // 화면 변화를 감지 후 다시 그려줌
+*/
+
+
+
+
+
 
 class App extends Component{
 
   state = {
-    customers: ""
+    customers: "",
+    completed : 0
   }
 
   componentDidMount(){
     // callApi를 불러와서 then함수로 하여금 res라는 이름으로 바뀌고 데이터를 customers에 담는다
+    this.timer = setInterval(this.progress, 20);
     this.callApi() 
     .then(res => this.setState({customers: res})) 
     .catch(err => console.log(err)); //error 처리
@@ -57,6 +77,11 @@ class App extends Component{
     const response = await fetch('/api/customers'); // 가져올 api주소 입력
     const body = await response.json();
     return body; // body(데이터) 반환
+  }
+
+  progress = () => {
+    const { completed } = this.state;
+    this.setState({ completed : completed >= 100 ? 0 : completed + 1 }); // 100이면 0으로 줄어들고 그렇지 않으면 + 1씩 증가
   }
 
 
@@ -85,7 +110,13 @@ class App extends Component{
                       gender={c.gender}
                       job={c.job}
                     />);
-                  }) : "데이터가 없습니다."
+                  }) : 
+                  <TableRow>
+                    <TableCell colSpan="6" align="center">
+                      <CircularProgress className={classes.progress} variant="determinate" value={this.state.completed}/>
+
+                    </TableCell>
+                  </TableRow>
                 }
             </TableBody>
           </Table>
