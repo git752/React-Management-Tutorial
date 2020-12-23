@@ -13,7 +13,7 @@ const customers = [
 },
 {
   'id' : 2,
-  'image' : './3535r13.jpg',
+  'image' : 'https://placeimg.com/64/64/any',
   'name' : '훙길둥',
   'birthday' : '313141',
   'gender' : '남자',
@@ -43,7 +43,7 @@ class App extends Component{
       );
     }
 }
-
+    
 
 
 export default App;
